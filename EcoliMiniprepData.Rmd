@@ -1,0 +1,130 @@
+---
+title: "All-in-One Scirpt for Miniprep Development Analysis"
+author: "Izzy Hernandez"
+date: "February 28, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+#### PART 1: Make a scatter plot of LB vs TB (+ Kanamycin) clone penalty scores (NGS Data) ####
+
+
+#Import Data from Excel Workbook to plot
+```{r}
+#LB+Kanamycin Clones = 5-8
+#TB+Kanamycin Clones = 9-12
+#Penalty Scores divided by LB vs. TB
+
+#use install.packages("readxl") if you don't have the package yet
+
+library(readxl) #load library to import Excel Workbook into your R workspace
+PenaltyData <- read_excel("C:/Users/ihernandez/Desktop/Molecular Bio Projects/Experiments and Data Analysis/Miniprep in TB LB/Experiment 2 - C040g/C040g_Datafor_Rscripts.xlsx", 
+     sheet = "PenaltyScore_Plot")
+
+#Workbook now loaded and saved as Penalty Data
+#Can use head(LB_TB_CloneData_forR) to check first few entries of the data.
+
+```
+
+
+#Define Data for the X and Y axis of the plot (penalty scores for LB vs. TB + Kanamycin)
+```{r}
+LB_penalty <- PenaltyData$LB_penaltyscore #Will use for x axis
+TB_penalty <- PenaltyData$TB_penaltyscore #Will use for y axis
+```
+
+
+#Make a simple scatter plot which correlates the penalty scores of LB+Kanamycin Clones with TB+Kanamycin Clones.
+```{r}
+#use install.packages("ggpplot2") if you don't have this install -- very useful for data visualization!
+
+library(ggplot2) #load ggplot library
+LB_TB_penaltygraph <- ggplot(PenaltyData, aes(x=LB_penalty, y=TB_penalty)) + geom_point()
+
+LB_TB_penaltygraph + labs(title = "Correlation of LB+Kan and TB+Kan Penalty Scores", x = "LB+Kan Penalty Score", y = "TB+Kan Penalty Score") + geom_smooth(method = "lm") + theme_bw() + theme(plot.title = element_text(hjust = 0.5))
+```
+
+
+
+
+#### PART 2: Make Histograms of LB and TB Miniprep DNA Concentrations ####
+
+#Import Data from Excel Workbook to plot
+```{r}
+
+library(readxl) #load library to import Excel Workbook into your R workspace
+C040g_LBdna <- read_excel("C:/Users/ihernandez/Desktop/Molecular Bio Projects/Experiments and Data Analysis/Miniprep in TB LB/Experiment 2 - C040g/C040g_Datafor_Rscripts.xlsx", 
+      sheet = "LB_KanHist")
+
+```
+
+
+#Define Data for DNA concentrations of LB Minipreps
+```{r}
+LB_DNAquant <- C040g_LBdna$`LB_Concentration` #Will use for x axis
+```
+
+
+#Make a simple historgram of LB+Kanamycin DNA concentrations
+```{r}
+library(ggplot2)
+LB_DNA_Histogram <- ggplot(C040g_LBdna, aes(x=LB_DNAquant)) + geom_histogram(binwidth = 1, col = "black", fill="darkblue") #makes histogram of LB+Kan DNA quants
+LB_DNA_Histogram+ labs(title = "Distribution of LB+Kan DNA Concentrations", x = "[DNA] (ng/uL)", y = "Count") + theme_bw() + theme(plot.title = element_text(hjust = 0.5))
+```
+
+
+#### Creating a Histogram of TB+Kan Miniprep DNA Concentrations ####
+```{r}
+library(readxl) #load library to import Excel Workbook into your R workspace
+C040g_TBdna <- read_excel("C:/Users/ihernandez/Desktop/Molecular Bio Projects/Experiments and Data Analysis/Miniprep in TB LB/Experiment 2 - C040g/C040g_Datafor_Rscripts.xlsx", 
+      sheet = "TB_KanHist")
+
+```
+
+
+#Define Data for DNA concentrations of TB + carb Minipreps
+```{r}
+TB_DNAquant <- C040g_TBdna$`TB_Concentration` #Will use for x axis
+```
+
+
+#Make a simple historgram of LB+Kanamycin DNA concentrations
+```{r}
+library(ggplot2)
+TB_DNA_Histogram <- ggplot(C040g_TBdna, aes(x=TB_DNAquant)) + geom_histogram(binwidth = 2, col = "black", fill ="darkred")
+TB_DNA_Histogram+ labs(title = "Distribution of TB+Kan DNA Concentrations", x = "[DNA] (ng/uL)", y = "Count") + theme_bw() + theme(plot.title = element_text(hjust = 0.5))
+```
+
+
+
+
+#### PART 3: Make a dotplot of LB vs. TB Miniprep DNA Concentrations ####
+
+#Import Data from Excel Workbook to plot
+```{r}
+
+library(readxl) #load library to import Excel Workbook into your R workspace
+C040g_QuantData <- read_excel("C:/Users/ihernandez/Desktop/Molecular Bio Projects/Experiments and Data Analysis/Miniprep in TB LB/Experiment 2 - C040g/C040g_Datafor_Rscripts.xlsx", 
+      sheet = "Data_DNAConc_Plot")
+#view(C040g_Datafor_Rscripts)
+```
+
+
+#Define Data for the X and Y axis of the plot (penalty scores for LB vs. TB + Kanamycin)
+```{r}
+LB_DNAquant <- C040g_QuantData$LB_Concentration #Will use for x axis
+TB_DNAquant <- C040g_QuantData$TB_Concentration #Will use for y axis
+```
+
+
+#Make a simple scatter plot which correlates the penalty scores of LB+Kan Clones with TB+Kan Clones.
+```{r}
+library(ggplot2) #load ggplot library
+LB_TB_concentrationgraph <- ggplot(C040g_QuantData, aes(x=LB_DNAquant, y=TB_DNAquant)) + geom_point() + scale_y_continuous(expand = c(0, 0), limits = c(0, 50)) + scale_x_continuous(expand = c(0, 0), limits = c(0, 20))  
+LB_TB_concentrationgraph + labs(title = "Correlation of LB+Kan and TB+Kan DNA Concentrations", x = "LB+Kan [DNA] (ng/uL)", y = "TB+Kan [DNA] (ng/uL)") + geom_smooth(method = "lm") + theme_bw() + theme(plot.title = element_text(hjust = 0.5))
+```
